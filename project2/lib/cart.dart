@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class CartPage extends StatefulWidget {
-  const CartPage({super.key});
+  const CartPage({Key? key}) : super(key: key);
 
   @override
   _CartPageState createState() => _CartPageState();
@@ -13,7 +13,17 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Color.fromARGB(255, 133, 113, 113),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 232, 231, 231),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text('Your Cart'),
+      ),
       body: StreamBuilder(
         stream: _fetchCartItemsStream(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -50,7 +60,7 @@ class _CartPageState extends State<CartPage> {
                     return CartItemWidget(
                       cartItem: cartItem,
                       onRemove: () {
-                        // Reload the cart items when an item is removed
+                      
                         setState(() {});
                       },
                     );
@@ -66,7 +76,7 @@ class _CartPageState extends State<CartPage> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        // Implement your checkout logic here
+                     
                       },
                       child: const Text('Checkout'),
                     ),
@@ -100,37 +110,95 @@ class CartItemWidget extends StatefulWidget {
   final Map<String, dynamic> cartItem;
   final VoidCallback onRemove;
 
-  const CartItemWidget({super.key, required this.cartItem, required this.onRemove});
+  const CartItemWidget({Key? key, required this.cartItem, required this.onRemove}) : super(key: key);
 
   @override
   _CartItemWidgetState createState() => _CartItemWidgetState();
 }
 
 class _CartItemWidgetState extends State<CartItemWidget> {
-  var quantity;
-  
-  var cartItems;
+  late int quantity;
+
+  void _updateQuantity(int newQuantity) {
+    String? cartItemId = widget.cartItem['cartItemId'];
+
+    if (cartItemId != null) {
+      FirebaseFirestore.instance
+          .collection('carts')
+          .doc(cartItemId)
+          .get()
+          .then((docSnapshot) {
+            if (docSnapshot.exists) {
+            
+              docSnapshot.reference.update({'quantity': newQuantity}).then((_) {
+               
+                widget.onRemove();
+              }).catchError((error) {
+                print('Error updating quantity in cart: $error');
+              });
+            } else {
+              print('Document with ID $cartItemId does not exist.');
+            }
+          })
+          .catchError((error) {
+            print('Error getting document: $error');
+          });
+    } else {
+      print('CartItemId is null');
+    }
+  }
+
+  void _increaseQuantity() {
+    setState(() {
+      quantity++;
+      _updateQuantity(quantity);
+    });
+  }
+
+  void _decreaseQuantity() {
+    if (quantity > 1) {
+      setState(() {
+        quantity--;
+        _updateQuantity(quantity);
+      });
+    }
+  }
 
   void _removeFromCart() {
-    FirebaseFirestore.instance
-        .collection('carts')
-        .doc(widget.cartItem['cartItemId']) // Assuming there's a unique identifier for each cart item
-        .delete()
-        .then((_) {
-          // Call the onRemove callback to trigger UI update
-          widget.onRemove();
-        })
-        .catchError((error) {
-          print('Error removing item from cart: $error');
-        });
+    String? cartItemId = widget.cartItem['cartItemId'];
+
+    if (cartItemId != null) {
+      FirebaseFirestore.instance
+          .collection('carts')
+          .doc(cartItemId)
+          .get()
+          .then((docSnapshot) {
+            if (docSnapshot.exists) {
+             
+              docSnapshot.reference.delete().then((_) {
+             
+                widget.onRemove();
+              }).catchError((error) {
+                print('Error removing item from cart: $error');
+              });
+            } else {
+              print('Document with ID $cartItemId does not exist.');
+            }
+          })
+          .catchError((error) {
+            print('Error getting document: $error');
+          });
+    } else {
+      print('CartItemId is null');
+    }
   }
-@override
+
+  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    cartItems=widget.cartItem;
-    quantity=widget.cartItem['quantity'];
+    quantity = widget.cartItem['quantity'];
   }
+
   @override
   Widget build(BuildContext context) {
     double productTotal = widget.cartItem['quantity'] * widget.cartItem['price'];
@@ -138,7 +206,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     return ListTile(
       leading: CircleAvatar(
         radius: 20,
-        backgroundColor: const Color.fromARGB(255, 232, 225, 226) ,
+        backgroundColor: const Color.fromARGB(255, 232, 225, 226),
         backgroundImage: NetworkImage(widget.cartItem['productImage']),
       ),
       title: Text(
@@ -150,21 +218,14 @@ class _CartItemWidgetState extends State<CartItemWidget> {
           IconButton(
             icon: const Icon(Icons.remove),
             onPressed: () {
-              if (quantity > 1) {
-                setState(() {
-                  quantity--;
-                });
-              }
+              _decreaseQuantity();
             },
           ),
           Text('Quantity: $quantity', style: const TextStyle(color: Colors.white)),
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              setState(() {
-                quantity++;
-               
-              });
+              _increaseQuantity();
             },
           ),
           IconButton(
@@ -186,7 +247,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
 class TotalPriceWidget extends StatelessWidget {
   final List cartItems;
 
-  const TotalPriceWidget({super.key, required this.cartItems});
+  const TotalPriceWidget({Key? key, required this.cartItems}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -19,7 +19,7 @@ class Products {
       this.rating});
 
   Products.fromJson(Map<String, dynamic> json) {
-    //debugger();
+ 
     id = json['id'];
     title = json['title'];
     price = "${json['price']}";

@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project2/cart.dart';
 
-
-
 class ProductDetail extends StatelessWidget {
   final int? productId;
   final String? productImage;
@@ -21,6 +19,15 @@ class ProductDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[900],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Container(
         color: Colors.grey[900],
         margin: EdgeInsets.only(top: 50.0, left: 20.0, right: 20.0),
@@ -28,18 +35,6 @@ class ProductDetail extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.only(right: 370),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
               Image.network(
                 productImage!,
                 height: 250,
@@ -98,7 +93,6 @@ class ProductDetail extends StatelessWidget {
                       });
                     }
 
-                    // Show a snackbar indicating the product was added to the cart
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Colors.orangeAccent,
@@ -106,10 +100,9 @@ class ProductDetail extends StatelessWidget {
                       ),
                     );
 
-                    // You can choose to navigate to CartPage after showing the snackbar
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CartPage()), // Make sure to import CartPage
+                      MaterialPageRoute(builder: (context) => CartPage()), 
                     );
                   }
                 },

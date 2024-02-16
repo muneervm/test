@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         primaryColor: Colors.white,
         textTheme: TextTheme(
-          bodyMedium: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: const Color.fromARGB(255, 136, 78, 78)),
         ),
       ),
       home: WelcomePage(),

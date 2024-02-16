@@ -89,7 +89,7 @@ class _ProductHomePageState extends State<ProductHomePage> {
                       children: [
                         Image.network(
                           _products[index].image ?? '',
-                          height: 80.0, // Adjust the height as needed
+                          height: 80.0,
                           width: double.infinity,
                           fit: BoxFit.cover,
                         ),

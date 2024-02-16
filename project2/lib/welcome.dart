@@ -50,10 +50,10 @@ class WelcomePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 65),
                   SizedBox(
-                    width: 170, // Adjust the button width
-                    height: 30,  // Adjust the button height
+                    width: 170,
+                    height: 30,  
                     child: Transform.scale(
-                      scale: 1.5, // Adjust the scale factor for the size
+                      scale: 1.5, 
                       child: SwipeButton.expand(
                         thumb: const Icon(
                           Icons.double_arrow_rounded,

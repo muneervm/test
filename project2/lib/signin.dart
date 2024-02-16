@@ -29,7 +29,7 @@ class SigninPageState extends State<SigninPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Lottie.network(
-                    'https://lottie.host/87e39318-9746-40dc-a6d5-77c442b89f2b/H3MgLLrZ7u.json', // Replace with your Lottie animation URL
+                    'https://lottie.host/87e39318-9746-40dc-a6d5-77c442b89f2b/H3MgLLrZ7u.json', 
                     width: 300,
                     height: 300,
                     fit: BoxFit.cover,
